@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 from src.logger import logging
 from src.exception import CustomException
 
+from src.components.data_transformation import DataTransformationConfig, DataTransformation
+
 @dataclass
 class DataIngestionConfig:
     train_data_path = os.path.join('artifacts', 'train.csv' )
@@ -23,6 +25,12 @@ class DataIngestion:
             logging.info('Read dataset into dataframe')
 
             df.to_csv(self.data_ingestion_config.raw_data_path, index=False, header=True)
+
+            logging.info('Removing the duplicate rows from data')
+            df = df[~df.duplicated()]
+
+            logging.info('Dropping unwanted columns from dataframe')
+            df = df.drop(['SpecialDay (probability)', 'ProductRelated_Duration', 'BounceRates in %'], axis =1)
 
             logging.info('Train and test data split initiated')
             train_data, test_data = train_test_split(df, test_size=0.2, random_state=1)
@@ -42,6 +50,9 @@ class DataIngestion:
 
 if __name__=='__main__':
     data_ingestion_obj = DataIngestion()
-    data_ingestion_obj.initiate_data_ingestion()
+    train_path, test_path = data_ingestion_obj.initiate_data_ingestion()
+
+    data_transformation_obj = DataTransformation()
+    data_transformation_obj.initiate_data_transformation(train_path, test_path)
     
     
