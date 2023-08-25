@@ -8,6 +8,8 @@ from src.exception import CustomException
 
 from src.components.data_transformation import DataTransformationConfig, DataTransformation
 
+from src.components.model_training import ModelTrainerConfig, ModelTrainer
+
 @dataclass
 class DataIngestionConfig:
     train_data_path = os.path.join('artifacts', 'train.csv' )
@@ -53,6 +55,12 @@ if __name__=='__main__':
     train_path, test_path = data_ingestion_obj.initiate_data_ingestion()
 
     data_transformation_obj = DataTransformation()
-    data_transformation_obj.initiate_data_transformation(train_path, test_path)
+    train_array, test_array, _=data_transformation_obj.initiate_data_transformation(train_path, test_path)
+
+    model_trainer_obj = ModelTrainer()
+    model_name,score=model_trainer_obj.initiate_model_trainer(train_array, test_array)
+    print(model_name, score)
+
+
     
     

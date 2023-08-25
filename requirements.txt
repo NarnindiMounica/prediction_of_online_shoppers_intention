@@ -6,4 +6,5 @@ scikit-learn
 datetime
 dataclasses
 dill
+xgboost
 # -e .
